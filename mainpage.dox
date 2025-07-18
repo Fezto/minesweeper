@@ -1,0 +1,94 @@
+/**
+ * @mainpage Minesweeper C++23 - Documentation
+ * 
+ * @section intro_sec Introduction
+ * 
+ * Welcome to the documentation for **Minesweeper C++23**, a modern implementation 
+ * of the classic minesweeper game built with C++23 and educational purposes in mind.
+ * 
+ * This project demonstrates modern C++ programming techniques including:
+ * - Object-Oriented Programming with clear separation of concerns
+ * - Modern C++23 features and best practices
+ * - STL containers and algorithms
+ * - Regular expressions for input validation
+ * - Cross-platform development with CMake
+ * 
+ * @section arch_sec Architecture Overview
+ * 
+ * The application is structured around three main classes:
+ * 
+ * - **Game**: Main controller that orchestrates the game flow and user interaction
+ * - **Board**: Manages the game board, mine placement, and rendering
+ * - **Cell**: Represents individual cells with their state and content
+ * 
+ * @section features_sec Key Features
+ * 
+ * - ⚡ **Interactive Terminal Interface**: Clean, colored terminal output
+ * - 🎯 **Smart Input Validation**: Regex-based validation with helpful error messages  
+ * - 🔄 **Automatic Cell Propagation**: Flood-fill algorithm for empty cell revelation
+ * - 🚩 **Flag System**: Mark suspected mines with flags
+ * - 🏆 **Win/Lose Detection**: Automatic game state management
+ * - 🧪 **Unit Tests**: Comprehensive test suite for core functionality
+ * 
+ * @section usage_sec How to Play
+ * 
+ * 1. **Start the game**: Choose board dimensions (e.g., `10x8`)
+ * 2. **Make moves**: Use format `ColumnaFila Acción`
+ *    - `A5` or `A5 R` - Reveal cell at column A, row 5
+ *    - `B3 F` - Toggle flag at column B, row 3
+ * 3. **Win condition**: Reveal all non-mine cells
+ * 4. **Lose condition**: Reveal a cell containing a mine
+ * 
+ * @section build_sec Building the Project
+ * 
+ * @subsection requirements_subsec Requirements
+ * - C++23 compatible compiler (GCC 11+, Clang 13+, MSVC 2022+)
+ * - CMake 3.14 or higher
+ * 
+ * @subsection compile_subsec Compilation
+ * 
+ * @code{.sh}
+ * mkdir build && cd build
+ * cmake ..
+ * cmake --build .
+ * ./terminal        # Linux/macOS
+ * terminal.exe      # Windows
+ * @endcode
+ * 
+ * @subsection tests_subsec Running Tests
+ * 
+ * @code{.sh}
+ * mkdir build && cd build
+ * cmake -DBUILD_TESTS=ON ..
+ * cmake --build .
+ * ctest
+ * @endcode
+ * 
+ * @section classes_sec Main Classes
+ * 
+ * Navigate through the documentation to explore:
+ * 
+ * - Game - Main game controller and state management
+ * - Board - Board operations, rendering, and mine management  
+ * - Cell - Individual cell state and content management
+ * 
+ * @section enums_sec Enumerations
+ * 
+ * The project uses several well-documented enums:
+ * 
+ * - CellContent - Defines what a cell contains (Empty, Number, Mine)
+ * - CellState - Defines cell visibility (Hidden, Revealed, Flagged)
+ * - GameState - Defines overall game state (Playing, Won, Lost)
+ * - Color - ANSI color codes for terminal output
+ * 
+ * @section author_sec Author & License
+ * 
+ * Created as an educational C++ tutorial project.
+ * 
+ * This project is open source and available under the MIT License.
+ * 
+ * @note This documentation was generated using Doxygen.
+ * 
+ * @date 2025
+ * @version 1.0
+ */
