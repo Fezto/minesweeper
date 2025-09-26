@@ -45,7 +45,6 @@ _deps/
 # We WILL explicitly allow the docs/ folder below so files
 # inside docs/ (terminal.html / .wasm / .js) are NOT ignored.
 # ======================
-**/terminal.js
 **/terminal.wasm
 **/terminal.wasm.map
 **/terminal.wasm.mem
