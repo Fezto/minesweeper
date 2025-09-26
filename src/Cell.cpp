@@ -10,7 +10,7 @@
 // Constructor - initializes cell with content and state
 Cell::Cell(CellContent content, CellState state) : content(content), state(state) {}
 
-// * Getters - simple accessor methods
+// * Getters
 CellContent Cell::getContent() const { return content; }
 int Cell::getNearbyMines() const { return nearbyMines; }
 CellState Cell::getState() const { return state; }
@@ -25,10 +25,10 @@ bool Cell::isMine() const { return content == CellContent::Mine; }
 bool Cell::isNumber() const { return content == CellContent::Number; }
 bool Cell::isEmpty() const { return content == CellContent::Empty; }
 
-// * Setters - direct assignment methods
+// * Setters -
 void Cell::setContent(CellContent c) { content = c; }
 void Cell::setNearbyMines(int mines) { nearbyMines = mines; }
 void Cell::setState(CellState s) { state = s; }
 
-// * Utils - toggle flag state using ternary operator
+// * Utils
 void Cell::toggleFlag() { state = isFlagged() ? CellState::Hidden : CellState::Flagged; }

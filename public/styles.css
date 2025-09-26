@@ -1,0 +1,131 @@
+/* styles.css — Pixel-art revamp for Buscaminas
+   Keep the iOS-like window (dots) but give the UI a pixel / 8-bit vibe.
+   Replace badges with chunky info panels on the left.
+   Drop this file into your web/ or build-wasm alongside terminal.html.
+*/
+:root{
+  --bg: #0b1020; /* deep navy */
+  --panel: #11151f; /* dark panel */
+  --panel-2: #0b1220;
+  --text: #e6eef7;
+  --muted: #97a3b0;
+  --accent: #58a6ff;
+  --accent-2: #7c4dff;
+  --pixel: #0f1724; /* pixel border color */
+  --glass: rgba(255,255,255,0.02);
+  --good: #2ecc71;
+  --bad: #ff6b6b;
+  --yellow: #ffd166;
+}
+/* global reset and small pixel-art helpers */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background:
+    radial-gradient(900px 400px at 85% -150px, rgba(88,166,255,0.06), transparent 50%),
+    radial-gradient(600px 300px at -10% 110%, rgba(124,77,255,0.04), transparent 50%),
+    var(--bg);
+  color:var(--text);
+  display:flex;align-items:center;justify-content:center;padding:28px 16px;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+.app{width:min(1100px,100%)}
+
+/* grid layout */
+.layout{display:grid;grid-template-columns:360px 1fr;gap:16px}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+
+/* iOS-like window style (card) but with pixel edge */
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border-radius:12px;
+  border:4px solid var(--pixel); /* chunky pixel border */
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.02);
+  overflow:hidden;
+}
+
+/* Sidebar revamp: more visual counters, mini preview and controls */
+.sidebar{display:flex;flex-direction:column;gap:12px;height:100%}
+.controls{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+
+/* controls top area: size inputs kept but boxy */
+.ctrl{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;border-radius:6px;background:linear-gradient(180deg,#071021,#081220);border:2px solid rgba(255,255,255,0.02)}
+.ctrl label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+.ctrl input[type="number"]{width:100%;padding:8px;border-radius:6px;border:2px solid var(--pixel);background:#07101a;color:var(--text);font-weight:600}
+
+/* action buttons: chunky pixel style */
+.btns{display:flex;gap:8px}
+.btn{cursor:pointer;padding:10px 12px;border-radius:6px;border:3px solid var(--pixel);background:linear-gradient(180deg,#081a2a,#071322);color:var(--text);width:100%;text-align:center;font-weight:700;letter-spacing:1px}
+.btn.primary{background:linear-gradient(180deg,#164a85,#0f2e4f);border-color:#06263f}
+.btn:active{transform:translateY(1px)}
+
+/* Left visual dashboard area */
+.tips{padding:12px 16px;color:var(--muted);font-size:13px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:2px dashed rgba(255,255,255,0.02);border-radius:8px}
+
+/* Replace small 'chip' badges with big info tiles */
+#status{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#status .chip{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:12px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.015),rgba(255,255,255,0.01));border:3px solid var(--pixel);min-height:64px}
+#status .chip > span{font-size:12px;color:var(--muted)}
+#status .chip > strong{font-size:28px;line-height:1;font-weight:900;font-family:inherit;margin-top:6px;letter-spacing:2px}
+
+/* Specific tile visuals */
+#st-size strong{font-size:18px}
+#st-mines strong{color:var(--bad)}
+#st-flags strong{color:var(--yellow)}
+#st-revealed strong{color:var(--good)}
+#st-state strong{color:var(--accent);text-transform:uppercase}
+
+/* optional: tiny progress bar under a tile to visualize revealed % */
+#st-revealed .progress{margin-top:8px;width:80%;height:8px;border-radius:4px;background:rgba(255,255,255,0.03);overflow:hidden;border:1px solid rgba(0,0,0,0.4)}
+#st-revealed .progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--good),#3bd07f)}
+
+/* More informative non-badge area below stats */
+.tips .meta{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.tips .meta .note{flex:1 1 100%;padding:8px;border-radius:6px;background:rgba(255,255,255,0.02);border:2px solid var(--pixel);font-size:13px}
+
+/* Terminal/card styles (right side) */
+.terminal{display:grid;grid-template-rows:auto 1fr auto;min-height:58vh}
+.term-head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:2px solid rgba(255,255,255,0.02);background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
+
+/* keep iOS dots but slightly thicker (user liked them) */
+.dots{display:flex;gap:8px}
+.dot{width:12px;height:12px;border-radius:50%;background:#3a414b;border:2px solid var(--pixel);box-shadow:inset 0 1px 0 rgba(255,255,255,0.03)}
+.dot.red{background:var(--bad)}
+.dot.yellow{background:var(--yellow)}
+.dot.green{background:var(--good)}
+
+.term-body{white-space:pre-wrap;padding:14px 16px;margin:0;font-size:14px;line-height:1.45;background:repeating-linear-gradient(0deg, transparent 0 6px, rgba(255,255,255,0.003) 6px 7px);}
+.term-footer{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:2px solid rgba(255,255,255,0.02);background:linear-gradient(180deg,rgba(0,0,0,0.06),transparent)}
+
+.prompt{color:var(--accent)}
+#input{flex:1;padding:10px 12px;border-radius:6px;border:3px solid var(--pixel);background:#07101a;color:var(--text);outline:none}
+#send{padding:10px 14px;border-radius:6px;border:3px solid var(--pixel);background:#0d2435;color:var(--text);cursor:pointer}
+
+/* Board number color palette (preserve previous mapping) */
+.num1{color:#3b82f6}
+.num2{color:#22c55e}
+.num3{color:#ef4444}
+.num4{color:#1d4ed8;font-weight:700}
+.num5{color:#b91c1c;font-weight:700}
+.num6{color:#14b8a6}
+.num7{color:#6b7280}
+.num8{color:#9ca3af}
+.label{color:var(--yellow);font-weight:700}
+
+/* pixel-edges helper for small UI elements */
+.pixel-edge{box-shadow: 2px 2px 0 0 var(--pixel), -2px -2px 0 0 rgba(255,255,255,0.02)}
+
+/* responsive tweaks */
+@media (max-width:600px){
+  #status{grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr}
+}
+
+/* small nicety: animate progress width when revealed updates */
+#st-revealed .progress > i{transition:width 400ms cubic-bezier(.2,.8,.2,1)}
+
+/* accessibility / focus */
+button:focus,input:focus{outline:none;box-shadow:0 0 0 3px rgba(88,166,255,0.12)}
+
+/* end */

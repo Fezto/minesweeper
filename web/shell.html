@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Minesweeper — WASM</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style></style>
+  </head>
+
+  <body>
+    <div class="app">
+      <div class="layout">
+        <!-- Left panel (controls) -->
+        <aside class="card sidebar">
+          <div class="controls">
+            <div class="ctrl">
+              <div>
+                <label for="cols">Columns</label>
+                <input id="cols" type="number" min="2" max="26" value="10" />
+              </div>
+              <div>
+                <label for="rows">Rows</label>
+                <input id="rows" type="number" min="2" max="99" value="10" />
+              </div>
+            </div>
+            <div class="btns">
+              <button id="start" class="btn primary" type="button">
+                Start
+              </button>
+            </div>
+          </div>
+          <div class="tips">
+            <div id="status">
+              <div class="chip" id="st-size">Size: —</div>
+              <div class="chip" id="st-mines">Mines: —</div>
+              <div class="chip" id="st-flags">Flags: —</div>
+              <div class="chip" id="st-revealed">Revealed: —</div>
+              <div class="chip" id="st-state">State: —</div>
+            </div>
+            <div style="margin-top: 8px">
+              <div class="chip">Move: A1</div>
+              <div class="chip">Flag: B3 F</div>
+              <div class="chip">Change size and press Start</div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right panel (terminal) -->
+        <section class="card terminal">
+          <div class="term-head">
+            <div class="dots">
+              <span class="dot red"></span><span class="dot yellow"></span
+              ><span class="dot green"></span>
+            </div>
+          </div>
+          <pre id="output" class="term-body"></pre>
+          <form id="input-form" class="term-footer" autocomplete="off">
+            <span class="prompt">›</span>
+            <input id="input" placeholder="Move: A1 | B3 F" />
+            <button id="send" type="submit">Send</button>
+          </form>
+        </section>
+      </div>
+    </div>
+
+    {{{ SCRIPT }}}
+  </body>
+</html>

@@ -84,6 +84,11 @@ enum class Color
  */
 inline std::string toAnsi(Color c)
 {
+#ifdef NO_ANSI_COLORS
+    // In web or environments without ANSI support, return empty sequences
+    (void)c;
+    return "";
+#else
     switch (c)
     {
     case Color::Blue:
@@ -109,6 +114,7 @@ inline std::string toAnsi(Color c)
     default:
         return ""; // No formatting for unknown colors
     }
+#endif
 }
 
 /**

@@ -15,6 +15,7 @@
 #include "Game.h"
 #include "enums/Color.h"
 
+// Constructor - initializes the board entity
 Board::Board(int columns, int rows, int mines) : columns(columns), rows(rows), mines(mines)
 {
     // C++17 Class Template Argument Deduction! (CTAD)
@@ -92,7 +93,7 @@ int Board::calculateNearbyMines(int column, int row)
             if (!isValidBoardCoordinate(column + c, row + r))
                 continue;
 
-            if (c == 0 && r == 0) // Skip center cell. It is unnecesary!
+            if (c == 0 && r == 0) // Skip center cell. It is unnecessary!
                 continue;
 
             Cell &cell = getCell(column + c, row + r);
@@ -121,20 +122,25 @@ void Board::print() const
     {
         for (int c = 0; c < drawColumns; ++c)
         {
-            // Column headers (A, B, C, ...)
-            if (r == 0 && c > 1 && c < drawColumns - 1)
+            if (r == 0 && c == 0)
             {
-                std::cout << Color::Yellow << " " << static_cast<char>(c + 63) << Color::Reset << " ";
+                std::cout << "   ";
+            }
+            // Column headers (A, B, C, ...)
+            else if (r == 0 && c > 1 && c < drawColumns - 1)
+            {
+                char letter = 'A' + (c - 2);
+                std::cout << Color::Yellow << " " << letter << Color::Reset << " ";
             }
             // Row numbers (1, 2, 3, ...)
             else if (c == 0 && r > 1 && r < drawRows - 1)
             {
-                std::cout << Color::Yellow << std::setw(2) << r - 1 << Color::Reset << " ";
+                std::cout << Color::Yellow << " " << std::setw(2) << r - 1 << Color::Reset;
             }
             // Border corners
             else if ((r == 1 || r == drawRows - 1) && (c == 1 || c == drawColumns - 1))
             {
-                std::cout << "+";
+                std::cout << " + ";
             }
             // Horizontal borders
             else if (r == 1 || r == drawRows - 1)
@@ -144,7 +150,7 @@ void Board::print() const
             // Vertical borders
             else if (c == 1 || c == drawColumns - 1)
             {
-                std::cout << "|";
+                std::cout << " | ";
             }
             // Game cells
             else
@@ -152,40 +158,34 @@ void Board::print() const
                 int innerRow = r - 2;
                 int innerColumn = c - 2;
 
-                if (isValidBoardCoordinate(innerColumn, innerRow))
+                Cell cell = getCell(innerColumn, innerRow);
+
+                if (cell.isHidden())
                 {
-                    Cell cell = getCell(innerColumn, innerRow);
+                    std::cout << " # ";
+                    continue;
+                }
 
-                    if (cell.isHidden())
-                    {
-                        std::cout << " # ";
-                        continue;
-                    }
+                if (cell.isFlagged())
+                {
+                    std::cout << Color::Red << " F " << Color::Reset;
+                    continue;
+                }
 
-                    if (cell.isFlagged())
-                    {
-                        std::cout << Color::Red << " F " << Color::Reset;
-                        continue;
-                    }
+                if (cell.getContent() == CellContent::Mine)
+                {
+                    std::cout << " * ";
+                    continue;
+                }
 
-                    if (cell.getContent() == CellContent::Mine)
-                    {
-                        std::cout << " * ";
-                        continue;
-                    }
-
-                    if (cell.getContent() == CellContent::Number && cell.getNearbyMines() > 0)
-                    {
-                        Color mineColor = colorForNumber(cell.getNearbyMines());
-                        std::cout << " " << mineColor << cell.getNearbyMines() << Color::Reset << " ";
-                    }
-                    else
-                    {
-                        std::cout << "   ";
-                    }
+                if (cell.getContent() == CellContent::Number && cell.getNearbyMines() > 0)
+                {
+                    Color mineColor = colorForNumber(cell.getNearbyMines());
+                    std::cout << " " << mineColor << cell.getNearbyMines() << Color::Reset << " ";
                 }
                 else
                 {
+                    // Empty cell
                     std::cout << "   ";
                 }
             }
@@ -196,7 +196,7 @@ void Board::print() const
 
 std::array<int, 2> Board::generateRandomCoordinates() const
 {
-    // Modern C++ random number generation
+    // Modern C++ random number generation (no srand)
     std::random_device rd;
     std::mt19937 gen(rd());
 

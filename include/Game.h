@@ -189,6 +189,14 @@ public:
      * @note Called after each successful move to detect victory
      */
     void checkWinCondition();
+
+    // Exposed getters (used by web UI)
+    int getColumns() const { return board.getColumns(); }
+    int getRows() const { return board.getRows(); }
+    int getMinesTotal() const { return board.getMines(); }
+    int getFlagsCount() const;
+    int getRevealedCount() const;
+    int getStateValue() const { return static_cast<int>(state); }
 };
 
 #endif // GAME_H

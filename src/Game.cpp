@@ -13,26 +13,32 @@
 #include <regex>
 #include <cctype>
 
-// Constructor - initializes game with board dimensions and mine count
-Game::Game(int columns, int rows, int mines) : board(columns, rows, mines)
-{
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
+
+// Constructor - initializes game itself with board dimensions and mine count
+Game::Game(int columns, int rows, int mines) : board(columns, rows, mines) {
 }
 
 // Main game loop - handles input, validation, and game flow
-void Game::start()
-{
+void Game::start() {
     clear();
 
-    while (isPlaying())
-    {
+    while (isPlaying()) {
         board.print();
 
         std::string input = prompt();
 
-        if (!isValidInput(input))
-        {
+        // If EOF/cancel occurred in the prompt (in web), end the game
+        if (!std::cin.good()) {
+            setLost();
+            break;
+        }
+
+        if (!isValidInput(input)) {
             clear();
-            Message::warn("Formato inválido!");
+            Message::warn("Invalid format!");
             continue;
         }
 
@@ -44,21 +50,20 @@ void Game::start()
 
     board.print();
 
-    Message::warn(isLost() ? "Has perdido el juego!" : "Has ganado el juego!");
+    Message::warn(isLost() ? "You lost the game!" : "You won the game!");
 
+#if !defined(__EMSCRIPTEN__)
     std::cin.get();
+#endif
 }
 
 // Win condition check - counts revealed non-mine cells
-void Game::checkWinCondition()
-{
+void Game::checkWinCondition() {
     int cellsWithoutMine = board.getColumns() * board.getRows() - board.getMines();
     int revealedCellsWithoutMine = 0;
 
-    for (std::vector<Cell> &row : board.getBoard())
-    {
-        for (Cell &cell : row)
-        {
+    for (std::vector<Cell> &row: board.getBoard()) {
+        for (Cell &cell: row) {
             if (!cell.isMine() && cell.isRevealed())
                 ++revealedCellsWithoutMine;
         }
@@ -69,35 +74,34 @@ void Game::checkWinCondition()
 }
 
 // User input prompt - displays colorized instructions and gets input
-std::string Game::prompt()
-{
+std::string Game::prompt() {
     std::cout << std::endl;
     std::cout << "+--------------------------------------------------------------+\n";
-    std::cout << "| Escoge una columna (" << Color::Yellow << "A" << Color::Reset << "), una fila (" << Color::Yellow << "1" << Color::Reset << ") y tu accion (" << Color::Red << "F" << Color::Reset << ", " << Color::Teal << "R" << Color::Reset << ")      |\n";
-    std::cout << "| - " << Color::Red << "F" << Color::Reset << " es de " << Color::Red << "Flag" << Color::Reset << " y sirve para marcar una celda con una bandera |\n";
-    std::cout << "| - " << Color::Teal << "R" << Color::Reset << " es de " << Color::Teal << "Reveal" << Color::Reset << " y sirve para descubrir una celda            |\n";
-    std::cout << "| - Si quieres revelar, puedes omitir por completo la " << Color::Teal << "R" << Color::Reset << "        |\n";
+    std::cout << "| Choose a column (" << Color::Yellow << "A" << Color::Reset << "), a row (" << Color::Yellow <<"1" << Color::Reset << ") and your action (" << Color::Red << "F" << Color::Reset << ", " << Color::Teal <<"R"<< Color::Reset << ")        |\n";
+    std::cout << "| - " << Color::Red << "F" << Color::Reset << " stands for " << Color::Red << "Flag" << Color::Reset<<" and is used to mark a cell with a flag   |\n";
+    std::cout << "| - " << Color::Teal << "R" << Color::Reset << " stands for " << Color::Teal << "Reveal" <<Color::Reset <<" and is used to uncover a cell          |\n";
+    std::cout << "| - If you want to reveal, you can omit the " << Color::Teal << "R" << Color::Reset <<"                  |\n";
     std::cout << "|                                                              |\n";
-    std::cout << "| Entradas validas de ejemplo: (A9 F), (B3 R), (C4) etc.       |\n";
+    std::cout << "| Valid input examples: (A9 F), (B3 R), (C4) etc.              |\n";
     std::cout << "+--------------------------------------------------------------+\n";
 
     std::string input;
     std::cout << "\n -> ";
-    std::getline(std::cin, input);
+    if (!std::getline(std::cin, input)) {
+        // EOF (for example, user presses Cancel in browser prompt)
+        return std::string{};
+    }
     std::transform(input.begin(), input.end(), input.begin(), ::toupper);
 
     return input;
 }
 
 // Process player move - handles flag/reveal actions
-void Game::play(int column, int row, char action)
-{
+void Game::play(int column, int row, char action) {
     Cell &cell = board.getCell(column, row);
 
-    if (action == 'F')
-    {
-        if (!cell.isRevealed())
-        {
+    if (action == 'F') {
+        if (!cell.isRevealed()) {
             cell.toggleFlag();
         }
         return;
@@ -105,16 +109,14 @@ void Game::play(int column, int row, char action)
 
     revealCellAndPropagate(column, row);
 
-    if (cell.isMine())
-    {
+    if (cell.isMine()) {
         setLost();
         return;
     }
 }
 
 // Flood-fill algorithm - reveals cells and propagates to empty neighbors
-void Game::revealCellAndPropagate(int column, int row)
-{
+void Game::revealCellAndPropagate(int column, int row) {
     if (!board.isValidBoardCoordinate(column, row))
         return;
 
@@ -125,12 +127,9 @@ void Game::revealCellAndPropagate(int column, int row)
 
     cell.setState(CellState::Revealed);
 
-    if (cell.isEmpty())
-    {
-        for (int r = -1; r <= 1; ++r)
-        {
-            for (int c = -1; c <= 1; ++c)
-            {
+    if (cell.isEmpty()) {
+        for (int r = -1; r <= 1; ++r) {
+            for (int c = -1; c <= 1; ++c) {
                 if (!board.isValidBoardCoordinate(column + c, row + r))
                     continue;
 
@@ -139,8 +138,7 @@ void Game::revealCellAndPropagate(int column, int row)
 
                 Cell &neighborCell = board.getCell(column + c, row + r);
 
-                if (!neighborCell.isRevealed() && !neighborCell.isFlagged())
-                {
+                if (!neighborCell.isRevealed() && !neighborCell.isFlagged()) {
                     revealCellAndPropagate(column + c, row + r);
                 }
             }
@@ -161,27 +159,22 @@ void Game::setLost() { state = GameState::Lost; }
 void Game::print() const { board.print(); }
 
 // Input validation using regex pattern matching
-bool Game::isValidInput(const std::string &input) const
-{
+bool Game::isValidInput(const std::string &input) const {
     std::regex promptValidation(R"(([A-Z])(1?[0-9]|2[0-6])(\s([FR]))?)");
     return std::regex_match(input, promptValidation);
 }
 
 // Parse user input into structured data (column, row, action)
-InputData Game::parseInput(const std::string &input) const
-{
+InputData Game::parseInput(const std::string &input) const {
     int playedColumn = static_cast<int>(input.at(0)) - 65;
     int spacePos = input.find(' ');
     int playedRow;
     char action;
 
-    if (spacePos == std::string::npos)
-    {
+    if (spacePos == std::string::npos) {
         playedRow = std::stoi(input.substr(1)) - 1;
         action = 'R';
-    }
-    else
-    {
+    } else {
         playedRow = std::stoi(input.substr(1, spacePos - 1)) - 1;
         action = input.at(input.length() - 1);
     }
@@ -190,11 +183,31 @@ InputData Game::parseInput(const std::string &input) const
 }
 
 // Cross-platform screen clearing
-void Game::clear()
-{
-#if defined(_WIN32) || defined(_WIN64)
+void Game::clear() {
+#if defined(__EMSCRIPTEN__)
+    // Clear web terminal to avoid screen accumulation
+    EM_ASM({if (Module.clearOutput) Module.clearOutput(); });
+#elif defined(_WIN32) || defined(_WIN64)
     system("cls");
 #else
     system("clear");
 #endif
+}
+
+int Game::getFlagsCount() const {
+    int flags = 0;
+    for (const auto &row: board.getBoard())
+        for (const auto &cell: row)
+            if (cell.isFlagged())
+                ++flags;
+    return flags;
+}
+
+int Game::getRevealedCount() const {
+    int revealed = 0;
+    for (const auto &row: board.getBoard())
+        for (const auto &cell: row)
+            if (cell.isRevealed() && !cell.isMine())
+                ++revealed;
+    return revealed;
 }

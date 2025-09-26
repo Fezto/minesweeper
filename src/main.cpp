@@ -19,8 +19,8 @@
 int main()
 {
     // Welcome message and input prompt
-    std::cout << "Bienvenido al juego de Buscaminas <3\n";
-    std::cout << "Selecciona las dimensiones de tu tablero (Ej. 8x10):\n\n";
+    std::cout << "Welcome to Minesweeper <3\n";
+    std::cout << "Select your board dimensions (e.g. 8x10):\n\n";
 
     std::string boardSize{};
 
@@ -34,7 +34,7 @@ int main()
         std::getline(std::cin, boardSize);
         if (std::regex_match(boardSize, boardSizeValidation))
             break;
-        Message::warn("Formato invalido. Usa el formato 'numero x numero' como '10x8'");
+        Message::warn("Invalid format. Use 'number x number' like '10x8'");
     }
 
     // Parse dimensions and create game with error handling
@@ -54,7 +54,7 @@ int main()
         // Validate board dimensions (5x5 to 30x30)
         if (columns < 5 || rows < 5 || columns > 30 || rows > 30)
         {
-            Message::warn("Dimensiones deben estar entre 5x5 y 30x30");
+            Message::warn("Dimensions must be between 5x5 and 30x30");
             return 1;
         }
 
@@ -65,12 +65,12 @@ int main()
     }
     catch (const std::invalid_argument &e)
     {
-        Message::warn("Error: Números inválidos en las dimensiones");
+        Message::warn("Error: Invalid numbers in dimensions");
         return 1;
     }
     catch (const std::exception &e)
     {
-        Message::warn("Hubo un error inesperado: " + std::string(e.what()));
+        Message::warn("Unexpected error: " + std::string(e.what()));
         return 1;
     }
 

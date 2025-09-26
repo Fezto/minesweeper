@@ -4,67 +4,67 @@
 #include "Game.h"
 #include "Cell.h"
 
-// Test básico para verificar la creación del tablero
+// Basic test to verify board creation
 void testBoardCreation()
 {
     Board board(10, 8, 10);
 
-    // Verificar dimensiones
+    // Verify dimensions
     assert(board.getColumns() == 10);
     assert(board.getRows() == 8);
     assert(board.getMines() == 10);
 
-    std::cout << "✅ Test de creación del tablero pasado\n";
+    std::cout << "\u2705 Board creation test passed\n";
 }
 
-// Test para verificar coordenadas válidas
+// Test to verify valid coordinates
 void testValidCoordinates()
 {
     Board board(5, 5, 5);
 
-    // Coordenadas válidas
+    // Valid coordinates
     assert(board.isValidBoardCoordinate(0, 0) == true);
     assert(board.isValidBoardCoordinate(4, 4) == true);
     assert(board.isValidBoardCoordinate(2, 3) == true);
 
-    // Coordenadas inválidas
+    // Invalid coordinates
     assert(board.isValidBoardCoordinate(-1, 0) == false);
     assert(board.isValidBoardCoordinate(0, -1) == false);
     assert(board.isValidBoardCoordinate(5, 0) == false);
     assert(board.isValidBoardCoordinate(0, 5) == false);
 
-    std::cout << "✅ Test de coordenadas válidas pasado\n";
+    std::cout << "\u2705 Valid coordinates test passed\n";
 }
 
-// Test para verificar estados de celda
+// Test to verify cell states
 void testCellStates()
 {
     Cell cell(CellContent::Empty);
 
-    // Estado inicial
+    // Initial state
     assert(cell.isHidden() == true);
     assert(cell.isRevealed() == false);
     assert(cell.isFlagged() == false);
 
-    // Cambiar estado a bandera
+    // Change state to flagged
     cell.toggleFlag();
     assert(cell.isFlagged() == true);
     assert(cell.isHidden() == false);
 
-    // Quitar bandera
+    // Remove flag
     cell.toggleFlag();
     assert(cell.isFlagged() == false);
     assert(cell.isHidden() == true);
 
-    // Revelar celda
+    // Reveal cell
     cell.setState(CellState::Revealed);
     assert(cell.isRevealed() == true);
     assert(cell.isHidden() == false);
 
-    std::cout << "✅ Test de estados de celda pasado\n";
+    std::cout << "\u2705 Cell state test passed\n";
 }
 
-// Test para verificar contenido de celda
+// Test to verify cell content
 void testCellContent()
 {
     Cell emptyCell(CellContent::Empty);
@@ -79,15 +79,15 @@ void testCellContent()
 
     assert(numberCell.getContent() == CellContent::Number);
 
-    std::cout << "✅ Test de contenido de celda pasado\n";
+    std::cout << "\u2705 Cell content test passed\n";
 }
 
-// Test para verificar el conteo de minas cercanas
+// Test to verify nearby mine count
 void testMineCount()
 {
     Cell cell(CellContent::Number);
 
-    // Establecer número de minas cercanas
+    // Set number of nearby mines
     cell.setNearbyMines(3);
     assert(cell.getNearbyMines() == 3);
 
@@ -97,7 +97,7 @@ void testMineCount()
     cell.setNearbyMines(8);
     assert(cell.getNearbyMines() == 8);
 
-    std::cout << "✅ Test de conteo de minas pasado\n";
+    std::cout << "\u2705 Mine count test passed\n";
 }
 
 int main()
