@@ -23,27 +23,27 @@ call emcmake cmake -B %BUILD_DIR% -S . -G Ninja -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
 REM Compilar
 call cmake --build %BUILD_DIR% -j
 
-REM Solo para Release: copiar archivos a public/
+REM Solo para Release: copiar archivos a docs/
 if /I "%BUILD_TYPE%"=="Release" (
-    echo === Preparando carpeta public/ para GH Pages ===
-    if exist "%~dp0public" rd /s /q "%~dp0public"
-    mkdir "%~dp0public"
+    echo === Preparando carpeta docs/ para GH Pages ===
+    if exist "%~dp0docs" rd /s /q "%~dp0docs"
+    mkdir "%~dp0docs"
 
     REM Copiar build
-    robocopy "%BUILD_DIR%" "%~dp0public" /MIR /XF terminal.html /NDL /NFL /NJH /NJS
+    robocopy "%BUILD_DIR%" "%~dp0docs" /MIR /XF terminal.html /NDL /NFL /NJH /NJS
 
     REM Copiar archivos web necesarios
-    copy "%~dp0web\pre.js" "%~dp0public\pre.js"
-    copy "%~dp0web\shell.html" "%~dp0public\shell.html"
-    copy "%~dp0web\styles.css" "%~dp0public\styles.css"
+    copy "%~dp0web\pre.js" "%~dp0docs\pre.js"
+    copy "%~dp0web\shell.html" "%~dp0docs\shell.html"
+    copy "%~dp0web\styles.css" "%~dp0docs\styles.css"
 
     REM Renombrar terminal.html a index.html para GH Pages
-    copy "%BUILD_DIR%\terminal.html" "%~dp0public\index.html"
+    copy "%BUILD_DIR%\terminal.html" "%~dp0docs\index.html"
 
     REM Crear .nojekyll
-    echo.>"%~dp0public\.nojekyll"
+    echo.>"%~dp0docs\.nojekyll"
 
-    echo === Public/ listo para GH Pages ===
+    echo === Docs listo para GH Pages ===
 )
 
 REM Servir la app localmente
