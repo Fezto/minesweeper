@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <regex>
-#include <cctype>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -77,10 +76,15 @@ void Game::checkWinCondition() {
 std::string Game::prompt() {
     std::cout << std::endl;
     std::cout << "+--------------------------------------------------------------+\n";
-    std::cout << "| Choose a column (" << Color::Yellow << "A" << Color::Reset << "), a row (" << Color::Yellow <<"1" << Color::Reset << ") and your action (" << Color::Red << "F" << Color::Reset << ", " << Color::Teal <<"R"<< Color::Reset << ")        |\n";
-    std::cout << "| - " << Color::Red << "F" << Color::Reset << " stands for " << Color::Red << "Flag" << Color::Reset<<" and is used to mark a cell with a flag   |\n";
-    std::cout << "| - " << Color::Teal << "R" << Color::Reset << " stands for " << Color::Teal << "Reveal" <<Color::Reset <<" and is used to uncover a cell          |\n";
-    std::cout << "| - If you want to reveal, you can omit the " << Color::Teal << "R" << Color::Reset <<"                  |\n";
+    std::cout << "| Choose a column (" << Color::Yellow << "A" << Color::Reset << "), a row (" << Color::Yellow << "1"
+            << Color::Reset << ") and your action (" << Color::Red << "F" << Color::Reset << ", " << Color::Teal << "R"
+            << Color::Reset << ")        |\n";
+    std::cout << "| - " << Color::Red << "F" << Color::Reset << " stands for " << Color::Red << "Flag" << Color::Reset
+            << " and is used to mark a cell with a flag   |\n";
+    std::cout << "| - " << Color::Teal << "R" << Color::Reset << " stands for " << Color::Teal << "Reveal" <<
+            Color::Reset << " and is used to uncover a cell          |\n";
+    std::cout << "| - If you want to reveal, you can omit the " << Color::Teal << "R" << Color::Reset <<
+            "                  |\n";
     std::cout << "|                                                              |\n";
     std::cout << "| Valid input examples: (A9 F), (B3 R), (C4) etc.              |\n";
     std::cout << "+--------------------------------------------------------------+\n";
@@ -91,7 +95,7 @@ std::string Game::prompt() {
         // EOF (for example, user presses Cancel in browser prompt)
         return std::string{};
     }
-    std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+    std::ranges::transform(input, input.begin(), ::toupper);
 
     return input;
 }
@@ -167,7 +171,7 @@ bool Game::isValidInput(const std::string &input) const {
 // Parse user input into structured data (column, row, action)
 InputData Game::parseInput(const std::string &input) const {
     int playedColumn = static_cast<int>(input.at(0)) - 65;
-    int spacePos = input.find(' ');
+    std::string::size_type spacePos = input.find(' ');
     int playedRow;
     char action;
 

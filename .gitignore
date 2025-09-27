@@ -45,10 +45,8 @@ _deps/
 # We WILL explicitly allow the docs/ folder below so files
 # inside docs/ (terminal.html / .wasm / .js) are NOT ignored.
 # ======================
-**/terminal.wasm
 **/terminal.wasm.map
 **/terminal.wasm.mem
-**/terminal.html
 
 # ======================
 # IDE/editor files
@@ -102,6 +100,6 @@ CMakeFiles/
 
 # Others
 *.exe
-*.wasm.map
+
 *.app
 

@@ -1,74 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>Minesweeper — WASM</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <style></style>
-  </head>
+    <link rel="stylesheet" href="styles.css"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app layout">
+    <aside class="panel side" aria-label="Controls & status">
+        <div class="block size-inputs">
+            <label>Columns
+                <input id="cols" type="number" min="5" max="15" value="10"/>
+            </label>
+            <label>Rows
+                <input id="rows" type="number" min="5" max="15" value="10"/>
+            </label>
+            <button id="start" class="btn primary" type="button">Start</button>
+        </div>
+        <div id="status" class="block status">
+            <div class="stat" id="st-size"><span class="k">Size</span><span class="v">—</span></div>
+            <div class="stat" id="st-mines"><span class="k">Mines</span><span class="v">—</span></div>
+            <div class="stat" id="st-flags"><span class="k">Flags</span><span class="v">—</span></div>
+            <div class="stat" id="st-revealed"><span class="k">Revealed</span><span class="v">—</span></div>
+            <div class="stat" id="st-state"><span class="k">State</span><span class="v">—</span></div>
+        </div>
+    </aside>
+    <main class="panel term" aria-label="Game output">
+        <header class="term-head">
+            <div class="lights">
+                <i class="l red"></i><i class="l yellow"></i><i class="l green"></i>
+            </div>
+            <span class="title">Minesweeper</span>
+            <button id="help" class="icon-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="help-panel" title="How to play">?</button>
+        </header>
 
-  <body>
-    <div class="app">
-      <div class="layout">
-        <!-- Left panel (controls) -->
-        <aside class="card sidebar">
-          <div class="controls">
-            <div class="ctrl">
-              <div>
-                <label for="cols">Columns</label>
-                <input id="cols" type="number" min="2" max="26" value="10" />
-              </div>
-              <div>
-                <label for="rows">Rows</label>
-                <input id="rows" type="number" min="2" max="99" value="10" />
-              </div>
-            </div>
-            <div class="btns">
-              <button id="start" class="btn primary" type="button">
-                Start
-              </button>
-            </div>
-          </div>
-          <div class="tips">
-            <div id="status">
-              <div class="chip" id="st-size">Size: —</div>
-              <div class="chip" id="st-mines">Mines: —</div>
-              <div class="chip" id="st-flags">Flags: —</div>
-              <div class="chip" id="st-revealed">Revealed: —</div>
-              <div class="chip" id="st-state">State: —</div>
-            </div>
-            <div style="margin-top: 8px">
-              <div class="chip">Move: A1</div>
-              <div class="chip">Flag: B3 F</div>
-              <div class="chip">Change size and press Start</div>
-            </div>
-          </div>
-        </aside>
-
-        <!-- Right panel (terminal) -->
-        <section class="card terminal">
-          <div class="term-head">
-            <div class="dots">
-              <span class="dot red"></span><span class="dot yellow"></span
-              ><span class="dot green"></span>
-            </div>
-          </div>
-          <pre id="output" class="term-body"></pre>
-          <form id="input-form" class="term-footer" autocomplete="off">
+        <!-- Help overlay (hidden by default) -->
+        <div id="help-panel" class="help-panel" role="dialog" aria-modal="false" aria-labelledby="help-title" hidden>
+            <h2 id="help-title">How to Play</h2>
+            <ul>
+                <li>Enter a move: <code>A1</code></li>
+                <li>Flag a cell: <code>B3 F</code></li>
+                <li>Reveal explicitly: <code>C4 R</code></li>
+                <li>Reveal is default if action omitted.</li>
+                <li>F = Flag, R = Reveal.</li>
+                <li>Board size limits: 5x5 .. 15x15.</li>
+                <li>Win by revealing all non‑mine cells.</li>
+            </ul>
+            <p>Press the ? again or Close to hide.</p>
+            <button type="button" id="close-help" class="btn close-btn">Close</button>
+        </div>
+        <pre id="output" class="term-body" aria-live="polite"></pre>
+        <form id="input-form" class="term-foot" autocomplete="off" spellcheck="false">
             <span class="prompt">›</span>
-            <input id="input" placeholder="Move: A1 | B3 F" />
-            <button id="send" type="submit">Send</button>
-          </form>
-        </section>
-      </div>
-    </div>
-
-    <script async type="text/javascript" src="terminal.js"></script>
-  </body>
+            <input id="input" placeholder="Move: A1 | B3 F"/>
+            <button id="send" type="submit" class="btn">Send</button>
+        </form>
+    </main>
+</div>
+<script async type="text/javascript" src="terminal.js"></script>
+<script>
+// Help panel toggle (kept inline to avoid extra copy steps in build)
+(function(){
+  const helpBtn = document.getElementById('help');
+  const panel = document.getElementById('help-panel');
+  const closeBtn = document.getElementById('close-help');
+  if(!helpBtn || !panel) return;
+  function toggle(force){
+    const willShow = force !== undefined ? force : panel.hasAttribute('hidden');
+    if(willShow){
+      panel.removeAttribute('hidden');
+      helpBtn.setAttribute('aria-expanded','true');
+      panel.focus?.();
+    } else {
+      panel.setAttribute('hidden','');
+      helpBtn.setAttribute('aria-expanded','false');
+    }
+  }
+  helpBtn.addEventListener('click', ()=> toggle());
+  closeBtn?.addEventListener('click', ()=> toggle(false));
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && !panel.hasAttribute('hidden')) toggle(false); });
+})();
+</script>
+</body>
 </html>

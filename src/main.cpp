@@ -16,8 +16,7 @@
  * @brief Main function - handles user input for board dimensions and starts the game
  * @return 0 on success, 1 on error
  */
-int main()
-{
+int main() {
     // Welcome message and input prompt
     std::cout << "Welcome to Minesweeper <3\n";
     std::cout << "Select your board dimensions (e.g. 8x10):\n\n";
@@ -28,8 +27,7 @@ int main()
     std::regex boardSizeValidation{"^[0-9]+[xX][0-9]+$"};
 
     // Input validation loop
-    while (true)
-    {
+    while (true) {
         std::cout << "-> ";
         std::getline(std::cin, boardSize);
         if (std::regex_match(boardSize, boardSizeValidation))
@@ -38,12 +36,10 @@ int main()
     }
 
     // Parse dimensions and create game with error handling
-    try
-    {
+    try {
         // Find separator position (case-insensitive)
         size_t xPos = boardSize.find('x');
-        if (xPos == std::string::npos)
-        {
+        if (xPos == std::string::npos) {
             xPos = boardSize.find('X');
         }
 
@@ -51,10 +47,9 @@ int main()
         int columns{std::stoi(boardSize.substr(0, xPos))};
         int rows{std::stoi(boardSize.substr(xPos + 1))};
 
-        // Validate board dimensions (5x5 to 30x30)
-        if (columns < 5 || rows < 5 || columns > 30 || rows > 30)
-        {
-            Message::warn("Dimensions must be between 5x5 and 30x30");
+        // Validate board dimensions (5x5 to 15x15)
+        if (columns < 5 || rows < 5 || columns > 15 || rows > 15) {
+            Message::warn("Dimensions must be between 5x5 and 15x15");
             return 1;
         }
 
@@ -62,14 +57,10 @@ int main()
         int mines = std::max(1, (columns * rows) / 8);
         Game minesweeper = Game(columns, rows, mines);
         minesweeper.start();
-    }
-    catch (const std::invalid_argument &e)
-    {
+    } catch (const std::invalid_argument &e) {
         Message::warn("Error: Invalid numbers in dimensions");
         return 1;
-    }
-    catch (const std::exception &e)
-    {
+    } catch (const std::exception &e) {
         Message::warn("Unexpected error: " + std::string(e.what()));
         return 1;
     }

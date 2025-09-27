@@ -5008,7 +5008,7 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('fetchSettings');
 }
 var ASM_CONSTS = {
-  23740: () => { if (Module.clearOutput) Module.clearOutput(); }
+  23660: () => { if (Module.clearOutput) Module.clearOutput(); }
 };
 
 // Imports from the Wasm binary.
